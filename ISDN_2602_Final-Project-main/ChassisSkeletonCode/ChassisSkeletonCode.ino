@@ -24,6 +24,9 @@ volatile int Start_point = 0;
 volatile int End_point = 0;
 volatile int Task = 0;
 
+// global config
+bool Using_testing_field = true;
+
 struct IntersectionLights
 {
   struct Light
@@ -56,9 +59,9 @@ void handleTrafficLight(const String &path, const String &data)
   JsonObject obj = doc.as<JsonObject>();
 
   String currentState = obj["current_state"];
-  Serial.println(currentState);
+  // Serial.println(currentState);
   int timeRemain = obj["time_remain"];
-  Serial.println(timeRemain);
+  // Serial.println(timeRemain);
 
   // Parse the path to get the intersection and light number
   int startPos = path.indexOf("intersection_") + strlen("intersection_");
@@ -370,9 +373,15 @@ void FireBaseTask(void *pvPara){
   ms = millis();
   while (app.isInitialized() && !app.ready() && millis() - ms < 120 * 1000)
     ;
+  Serial.println("App is ready");
   app.getApp<RealtimeDatabase>(Database);
   Database.url(DATABASE_URL);
-  Database.get(aClient, "/", asyncCB, true /* SSE mode (HTTP Streaming) */);
+  if (Using_testing_field){
+    Database.get(aClient, "/testing_field", asyncCB, true /* SSE mode (HTTP Streaming) */);
+  }
+  else {
+    Database.get(aClient, "/final", asyncCB, true /* SSE mode (HTTP Streaming) */);
+  }
 
   while (true) {
     app.loop();
