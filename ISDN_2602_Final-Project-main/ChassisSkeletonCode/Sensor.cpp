@@ -45,7 +45,7 @@ float Ultrasonic::GetDistance(){
   long  duration = pulseIn(Echo, HIGH);
   
   // Calculate the distance (in m)
-  distance = (duration * SOUND_SPEED/100)/2;
+  float distance = (duration * SOUND_SPEED/100)/2;
   
   // Prints the distance in the Serial Monitor
   // Serial.print("Distance (cm): ");
